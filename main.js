@@ -89,93 +89,24 @@ const countScore = () => {
             counts[diceValues[i]]++;
         }
     }
-    console.log("Counts: " + counts);
-    // if three of a kind is kept, add 1000 points for three 1s, 200 points for three 2s, and so on
-    // if there are three 1s, add 1000 points, for three 2s, add 200 points, and so on
-    // if there are four 1s, add 2000 points, for four 2s, add 400 points, and so on
-    // if there are five 1s, add 3000 points, for five 2s, add 600 points, and so on
-    // if there are six 1s, add 4000 points, for six 2s, add 800 points, and so on
-    for (let i = 0; i < 6; i++) {
-        if (keptFromPrev[i]) continue;
-        //if (!kept[diceValues[i]]) continue;
-        //console.log(`counts for ${i}: ${counts[i]}`);
-        //let count = counts[i];
-        console.log("index " + i);
-        switch (counts[i]) {
-            case 0:
-                console.log(`case 0`);
-                if (kept[i] && diceValues[i] === 0) {
-                    score += 100;
-                }
-                if (kept[i] && diceValues[i] === 4) {
-                    score += 50;
-                }
-                console.log("case 0 Score: " + score);
-                continue;
-            case 1:
-                console.log(`case 1`);
-                if (kept[i] && diceValues[i] === 0) {
-                    score += 100;
-                }
-                if (kept[i] && diceValues[i] === 4) {
-                    score += 50;
-                }
-                console.log("Score: " + score);
-                continue;
-            case 2:
-                console.log("case 2");
-                if (kept[i] && diceValues[i] === 0) {
-                    score += 100;
-                }
-                if (kept[i] && diceValues[i] === 4) {
-                    score += 50;
-                }
-                console.log("Score: " + score);
-                continue;
-            case 3:
-                console.log("case 3");
-                if (i === 0) {
-                    score -= 200;
-                    score += 1000; // three 1s
-                    console.log("score: " + score);
-                } else {
-                    if (i === 4) score -= 100;
-                    score += (i + 1) * 100; // three of any other number
-                }
-                continue;
-            case 4:
-                console.log("case 4");
-                if (i === 0) {
-                    score -= 300;
-                    score += 2000; // four 1s
-                } else {
-                    if (i === 4) score -= 150;
-                    score += (i + 1) * 200; // four of any other number
-                }
-                continue;
-            case 5:
-                console.log("case 5");
-                if (i === 0) {
-                    score -= 400;
-                    score += 3000; // five 1s
-                } else {
-                    if (i === 4) score -= 200;
-                    score += (i + 1) * 300; // five of any other number
-                }
-                continue;
-            case 6:
-                console.log("case 6");
-                if (i === 0) {
-                    score -= 500;
-                    score += 4000; // six 1s
-                } else {
-                    if (i === 4) score -= 250;
-                    score += (i + 1) * 400; // six of any other number
-                }
-                continue;
-            default:
-                console.log("default");
+    // calculate the amount of points
+    for (let value = 0; value < 6; value++) {
+        let count = counts[value];
+        if (count >= 3) {
+            // handle three or more of a kind
+            if (value === 0) {
+                score -= 200;
+                score += 1000 * (count - 2); // 3 ones = 1000, 4 = 2000, etc.
+            } else {
+                if (value === 4) score -= 100;
+                score += (value + 1) * 100 * (count - 2);
+            }
+            // Remove the counted dice from further single scoring
+            count -= (count - 2);
         }
+        // Score single 1s and 5s left
+        if (value === 0 && count > 0) score += 100 * count;
+        if (value === 4 && count > 0) score += 50 * count;
     }
     document.getElementById("score").innerText = "Score: " + (score + totalScore);
 }
