@@ -12,9 +12,41 @@ let diceValues = new Array(6).fill(0);
 let totalScore = 0;
 let score = 0;
 
-const players = [0, 1];
-let currentPlayer = 1;
+const players = [];
+let currentPlayer = 0;
 let startGame = true;
+
+const addPlayer = () => {
+    const playerName = document.getElementById("playerName").value.trim();
+    if (playerName === "") {
+        alert("Please enter a player name.");
+        return;
+    }
+    let playerNumber = players.length
+    // add player name to table
+    let playerList = document.getElementById("players");
+    let newPlayer = document.createElement("th");
+    newPlayer.id = "player" + playerNumber;
+    newPlayer.textContent = playerName;
+    playerList.appendChild(newPlayer);
+    // add player score list to table
+    let scoreData = document.createElement("td");
+    let scoreList = document.getElementById("scores");
+    scoreList.appendChild(scoreData);
+    let newScoreList = document.createElement("ul");
+    newScoreList.id = "scoreList" + playerNumber;
+    scoreData.appendChild(newScoreList);
+    players.push(playerNumber);
+    // add player total score to table
+    let totalData = document.createElement("td");
+    totalData.id = "total" + playerNumber;
+    totalData.classList.add("total");
+    totalData.innerText = "0";
+    let totalList = document.getElementById("totals");
+    totalList.appendChild(totalData);
+    // reset the input field
+    document.getElementById("playerName").value = "";
+}
 
 const OR = (arr1, arr2) => {
     return arr1.map((value, index) => value || arr2[index]);
@@ -80,8 +112,8 @@ const changePlayer = () => {
         document.getElementById("scoreList" + currentPlayer).appendChild(newScore);
         let current = document.getElementById("total" + currentPlayer).innerText;
         document.getElementById("total" + currentPlayer).innerText = Number(current) + result;
+        currentPlayer = (currentPlayer + 1) % players.length;
     }
-    currentPlayer = (currentPlayer + 1) % players.length;
     const name = document.getElementById("player" + (currentPlayer)).textContent;
     document.getElementById("currentPlayer").innerText = "Current player: " + name;
 }

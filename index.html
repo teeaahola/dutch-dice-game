@@ -29,27 +29,15 @@
         <div>
             <p id="score">Score: 0</p>
             <input type="text" id="playerName" placeholder="Name">
-            <input type="submit" id="addPlayer" value="Add player">
+            <input type="submit" id="addPlayer" value="Add player" onclick="addPlayer()">
         </div>
         <br/>
         <table id="scoreTable">
-        <tr>
-            <th id="player0">Atte</th>
-            <th id="player1">Teea</th>
+        <tr id="players" class="players">
         </tr>
-        <tr>
-            <td>
-                <ul id="scoreList0">
-                </ul>
-            </td>
-            <td>
-                <ul id="scoreList1">
-                </ul>
-            </td>
+        <tr id="scores" class="scores">
         </tr>
-        <tr>
-            <td id="total0" class="total">0</td>
-            <td id="total1" class="total">0</td>
+        <tr id="totals" class="totals">
         </tr>
         </table>
     </body>

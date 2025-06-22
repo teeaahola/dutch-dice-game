@@ -3,6 +3,34 @@ img {
     padding-right: 20px;
 }
 
+#dice {
+	padding: 0px;
+}
+
+table {
+	border-radius: 5px;
+}
+
+table, th {
+  border: 1px solid;
+  border-collapse: collapse;
+  padding: 10px;
+  text-align: center;
+}
+
+td {
+  border: 1px solid;
+  padding: 1px;
+  margin: 1px;
+  text-align: center;
+  width: 70px;
+}
+
+button {
+	width: 30%;
+	height: 60px;
+}
+
 label {
     display: inline-block;
     text-align: right;
@@ -11,5 +39,23 @@ label {
 
 input {
 	display: inline-block;
-	text-align: center;
+}
+
+ul {
+	list-style-type: none;
+	padding: 1px;
+	margin-top: 0px;
+	margin-bottom: 0px;
+}
+
+li {
+	padding: 1px;
+	margin-top: 5px;
+	margin-bottom: 5px;
+}
+
+.total {
+	font-weight: bold;
+	font-size: 1.2em;
+	padding: 5px;
 }
