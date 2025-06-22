@@ -18,6 +18,16 @@ const OR = (arr1, arr2) => {
 
 // rolls six dicePics and returns their values as an array
 const rollDice = () => {
+    // if all dice are kept when the dice are rolled, keep the current score as baseline
+    if (OR(kept, keptFromPrev).every(value => value)) {
+        totalScore += score;
+        for (let i = 0; i < 6; i++) {
+            kept[i] = false;
+            keptFromPrev[i] = false;
+            document.getElementById("dice" + i).checked = false;
+            document.getElementById("dice" + i).disabled = false;
+        }
+    }
     keptFromPrev = OR(kept, keptFromPrev);
     kept = new Array(6).fill(false);
     for (let i = 0; i < 6; i++) {
@@ -33,6 +43,7 @@ const rollDice = () => {
         diceText[i] = die;
     }
     document.getElementById("dice").innerHTML = diceText.join("");
+    document.getElementById("rollButton").disabled = true;
     totalScore += score;
     score = 0;
 }
@@ -56,19 +67,14 @@ const clickDie = (number) => {
 
 // reset the dice
 const reset = () => {
-    // if all die are kept when the game is reset, keep the current score as baseline
-    if (OR(kept, keptFromPrev).every(value => value)) {
-        totalScore += score;
-    } else {
-        totalScore = score = 0;
-        document.getElementById("score").innerText = "Score: 0";
-    }
     for (let i = 0; i < 6; i++) {
         kept[i] = false;
         keptFromPrev[i] = false;
         document.getElementById("dice" + i).checked = false;
         document.getElementById("dice" + i).disabled = false;
     }
+    totalScore = score = 0;
+    document.getElementById("score").innerText = "Score: 0";
     rollDice();
 }
 
@@ -113,5 +119,6 @@ const countScore = () => {
         if (value === 0 && count > 0) score += 100 * count;
         if (value === 4 && count > 0) score += 50 * count;
     }
+    document.getElementById("rollButton").disabled = (score === 0);
     document.getElementById("score").innerText = "Score: " + (score + totalScore);
 }
