@@ -35,7 +35,6 @@ const rollDice = () => {
     document.getElementById("dice").innerHTML = diceText.join("");
     totalScore += score;
     score = 0;
-    console.log("total: " + totalScore);
 }
 
 // keep the value of the parameter die
@@ -57,14 +56,20 @@ const clickDie = (number) => {
 
 // reset the dice
 const reset = () => {
+    // if all die are kept when the game is reset, keep the current score as baseline
+    if (OR(kept, keptFromPrev).every(value => value)) {
+        totalScore += score;
+    } else {
+        totalScore = score = 0;
+        document.getElementById("score").innerText = "Score: 0";
+    }
     for (let i = 0; i < 6; i++) {
         kept[i] = false;
         keptFromPrev[i] = false;
         document.getElementById("dice" + i).checked = false;
         document.getElementById("dice" + i).disabled = false;
     }
-    totalScore = score = 0;
-    document.getElementById("score").innerText = "Score: 0";
+    rollDice();
 }
 
 const isFlush = () => {
