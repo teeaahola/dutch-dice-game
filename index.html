@@ -8,8 +8,9 @@
     </head>
 
     <body>
-        <button id="rollButton" onclick="rollDice()">Roll Dice</button>
-        <button id="reset" onclick="reset()">Reset</button>
+        <button id="rollButton" onclick="rollDice()" disabled>Roll Dice</button>
+        <button id="reset" onclick="reset()">Next player</button>
+        <p id="currentPlayer"></p>
         <p id="dice"></p>
         <div>
             <input type="checkbox" id="dice0" onclick="keep(0)">
@@ -25,6 +26,31 @@
             <input type="checkbox" id="dice5" onclick="keep(5)">
             <label for="dice5">6</label>
         </div>
-        <p id="score">Score: 0</p>
+        <div>
+            <p id="score">Score: 0</p>
+            <input type="text" id="playerName" placeholder="Name">
+            <input type="submit" id="addPlayer" value="Add player">
+        </div>
+        <br/>
+        <table id="scoreTable">
+        <tr>
+            <th id="player0">Atte</th>
+            <th id="player1">Teea</th>
+        </tr>
+        <tr>
+            <td>
+                <ul id="scoreList0">
+                </ul>
+            </td>
+            <td>
+                <ul id="scoreList1">
+                </ul>
+            </td>
+        </tr>
+        <tr>
+            <td id="total0" class="total">0</td>
+            <td id="total1" class="total">0</td>
+        </tr>
+        </table>
     </body>
 </html>

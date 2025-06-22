@@ -12,6 +12,10 @@ let diceValues = new Array(6).fill(0);
 let totalScore = 0;
 let score = 0;
 
+const players = [0, 1];
+let currentPlayer = 1;
+let startGame = true;
+
 const OR = (arr1, arr2) => {
     return arr1.map((value, index) => value || arr2[index]);
 }
@@ -65,8 +69,26 @@ const clickDie = (number) => {
     keep(number);
 }
 
+// change the current player
+const changePlayer = () => {
+    if (startGame) {
+        startGame = false;
+    } else {
+        let newScore = document.createElement("li");
+        let result = kept.some(Boolean) ? totalScore + score : 0;
+        newScore.textContent = result > 0 ? totalScore + score : "—";
+        document.getElementById("scoreList" + currentPlayer).appendChild(newScore);
+        let current = document.getElementById("total" + currentPlayer).innerText;
+        document.getElementById("total" + currentPlayer).innerText = Number(current) + result;
+    }
+    currentPlayer = (currentPlayer + 1) % players.length;
+    const name = document.getElementById("player" + (currentPlayer)).textContent;
+    document.getElementById("currentPlayer").innerText = "Current player: " + name;
+}
+
 // reset the dice
 const reset = () => {
+    changePlayer();
     for (let i = 0; i < 6; i++) {
         kept[i] = false;
         keptFromPrev[i] = false;
