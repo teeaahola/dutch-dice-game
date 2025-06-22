@@ -15,6 +15,26 @@ let score = 0;
 const players = [];
 let currentPlayer = 0;
 let startGame = true;
+let currentWinner = null;
+let winnerScore = 0;
+let stopAt = null;
+
+const showRules = () => {
+    document.getElementById("rulesDialog").showModal();
+}
+
+const closeDialog = () => {
+    document.getElementById("rulesDialog").close();
+}
+
+const untick = () => {
+    for (let i = 0; i < 6; i++) {
+        kept[i] = false;
+        keptFromPrev[i] = false;
+        document.getElementById("dice" + i).checked = false;
+        document.getElementById("dice" + i).disabled = false;
+    }
+}
 
 const addPlayer = () => {
     const playerName = document.getElementById("playerName").value.trim();
@@ -36,7 +56,7 @@ const addPlayer = () => {
     let newScoreList = document.createElement("ul");
     newScoreList.id = "scoreList" + playerNumber;
     scoreData.appendChild(newScoreList);
-    players.push(playerNumber);
+    players.push(playerName);
     // add player total score to table
     let totalData = document.createElement("td");
     totalData.id = "total" + playerNumber;
@@ -57,12 +77,7 @@ const rollDice = () => {
     // if all dice are kept when the dice are rolled, keep the current score as baseline
     if (OR(kept, keptFromPrev).every(value => value)) {
         totalScore += score;
-        for (let i = 0; i < 6; i++) {
-            kept[i] = false;
-            keptFromPrev[i] = false;
-            document.getElementById("dice" + i).checked = false;
-            document.getElementById("dice" + i).disabled = false;
-        }
+        untick();
     }
     keptFromPrev = OR(kept, keptFromPrev);
     kept = new Array(6).fill(false);
@@ -105,6 +120,7 @@ const clickDie = (number) => {
 const changePlayer = () => {
     if (startGame) {
         startGame = false;
+        document.getElementById("next").innerHTML = "Next player";
     } else {
         let newScore = document.createElement("li");
         let result = kept.some(Boolean) ? totalScore + score : 0;
@@ -114,19 +130,57 @@ const changePlayer = () => {
         document.getElementById("total" + currentPlayer).innerText = Number(current) + result;
         currentPlayer = (currentPlayer + 1) % players.length;
     }
-    const name = document.getElementById("player" + (currentPlayer)).textContent;
+    const name = players[currentPlayer];
     document.getElementById("currentPlayer").innerText = "Current player: " + name;
 }
 
-// reset the dice
-const reset = () => {
+// reset the game
+const resetGame = () => {
+    players.length = currentPlayer = winnerScore = totalScore = score = 0;
+    currentWinner = stopAt = null;
+    startGame = true;
+    kept.fill(false);
+    keptFromPrev.fill(false);
+
+    document.getElementById("players").innerHTML = "";
+    document.getElementById("scores").innerHTML = "";
+    document.getElementById("totals").innerHTML = "";
+    document.getElementById("dice").innerHTML = "";
+    document.getElementById("currentPlayer").innerText = "Current player: None";
+    document.getElementById("next").disabled = false;
+    document.getElementById("next").innerHTML = "Start";
+
+    untick();
+
+    document.getElementById("score").innerText = "Score: 0";
+}
+
+// reset the dice for the next player
+const nextPlayer = () => {
+    let previousPlayer = currentPlayer;
     changePlayer();
-    for (let i = 0; i < 6; i++) {
-        kept[i] = false;
-        keptFromPrev[i] = false;
-        document.getElementById("dice" + i).checked = false;
-        document.getElementById("dice" + i).disabled = false;
+    let topScore = Number(document.getElementById("total" + previousPlayer).innerText);
+    if (topScore >= 5000) {
+        if (currentWinner === null) {
+            currentWinner = previousPlayer;
+            winnerScore = topScore;
+        }
+        if (winnerScore > 0 && topScore > winnerScore) {
+            if (stopAt === null) {
+                stopAt = currentWinner;
+            }
+            currentWinner = previousPlayer;
+            winnerScore = topScore;
+        }
     }
+    if (currentPlayer === currentWinner || currentPlayer === stopAt) {
+        alert("Congratulations " + players[currentWinner] + "! You have won with a score of " + winnerScore + "!");
+        document.getElementById("rollButton").disabled = true;
+        document.getElementById("next").disabled = true;
+        //currentWinner = null;
+        //winnerScore = 0;
+    }
+    untick();
     totalScore = score = 0;
     document.getElementById("score").innerText = "Score: 0";
     rollDice();

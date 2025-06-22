@@ -9,7 +9,18 @@
 
     <body>
         <button id="rollButton" onclick="rollDice()" disabled>Roll Dice</button>
-        <button id="reset" onclick="reset()">Next player</button>
+        <button id="next" onclick="nextPlayer()">Start</button>
+        <button id="reset" onclick="resetGame()">Restart</button>
+        <button id="rules" onclick="showRules()">Rules</button>
+        <dialog id="rulesDialog">
+            <button autofocus id="closeDialog" onclick="closeDialog()">Close</button>
+            <h2>Rules</h2>
+            <p>
+                Players take turns rolling six dice. The goal is to score points by rolling certain combinations.
+                After each roll, players can choose to keep some dice and re-roll the others.
+            </p>
+            <p>The game continues until a player reaches 5 000 points.</p>
+        </dialog>
         <p id="currentPlayer"></p>
         <p id="dice"></p>
         <div>
@@ -26,8 +37,8 @@
             <input type="checkbox" id="dice5" onclick="keep(5)">
             <label for="dice5">6</label>
         </div>
+        <p id="score">Score: 0</p>
         <div>
-            <p id="score">Score: 0</p>
             <input type="text" id="playerName" placeholder="Name">
             <input type="submit" id="addPlayer" value="Add player" onclick="addPlayer()">
         </div>
