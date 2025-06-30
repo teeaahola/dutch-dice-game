@@ -28,15 +28,12 @@ const closeDialog = () => {
 }
 
 const untick = () => {
-    for (let i = 0; i < 6; i++) {
-        kept[i] = false;
-        keptFromPrev[i] = false;
-        document.getElementById("dice" + i).checked = false;
-        document.getElementById("dice" + i).disabled = false;
-    }
+    kept.fill(false);
+    keptFromPrev.fill(false);
 }
 
 const addPlayer = () => {
+    console.log("here");
     const playerName = document.getElementById("playerName").value.trim();
     if (playerName === "") {
         alert("Please enter a player name.");
@@ -54,6 +51,7 @@ const addPlayer = () => {
     let scoreList = document.getElementById("scores");
     scoreList.appendChild(scoreData);
     let newScoreList = document.createElement("ul");
+    newScoreList.classList.add("score");
     newScoreList.id = "scoreList" + playerNumber;
     scoreData.appendChild(newScoreList);
     players.push(playerName);
@@ -66,14 +64,17 @@ const addPlayer = () => {
     totalList.appendChild(totalData);
     // reset the input field
     document.getElementById("playerName").value = "";
+    document.getElementById("next").disabled = false;
+    return false;
 }
 
 const OR = (arr1, arr2) => {
     return arr1.map((value, index) => value || arr2[index]);
 }
 
-// rolls six dicePics and returns their values as an array
+// rolls six dice
 const rollDice = () => {
+    console.log("Rolling dice");
     // if all dice are kept when the dice are rolled, keep the current score as baseline
     if (OR(kept, keptFromPrev).every(value => value)) {
         totalScore += score;
@@ -81,20 +82,43 @@ const rollDice = () => {
     }
     keptFromPrev = OR(kept, keptFromPrev);
     kept = new Array(6).fill(false);
+    let dice = document.getElementById("dice");
     for (let i = 0; i < 6; i++) {
         let die;
         if (keptFromPrev[i]) {
-            die = diceText[i];
-            document.getElementById("dice" + i).disabled = true;
+            // if the die was kept from the previous roll, keep it
+            let div = document.getElementById("div" + i);
+            console.log(div.innerHTML);
+            console.log("keeping die " + i);
+            dice.removeChild(div);
+            console.log("remove successful");
+            div.disabled = true;
+            dice.appendChild(div);
         } else {
-            let value = Math.floor(Math.random() * 6)
-            die = dicePics.get(value) + `onclick="clickDie(${i})">`;
+            if (startGame) {
+                startGame = !(i === 5);
+            } else {
+                console.log("removing die " + i);
+                let oldDiv = document.getElementById("div" + i);
+                dice.removeChild(oldDiv);
+            }
+            // create a new die
+            let value = Math.floor(Math.random() * 6);
+            let div = document.createElement("div");
+            div.classList.add("dieContainer");
+            div.id = "div" + i;
+            div.alt = "Die showing " + (value + 1);
+            die = document.createElement("img");
+            die.src = "images/" + (value + 1) + ".png";
+            die.classList.add("die");
+            die.id = "die" + i;
+            div.onclick = () => clickDie(i);
             diceValues[i] = value;
+            div.appendChild(die);
+            dice.appendChild(div);
         }
-        diceText[i] = die;
     }
-    document.getElementById("dice").innerHTML = diceText.join("");
-    document.getElementById("rollButton").disabled = true;
+    document.getElementById("roll").disabled = true;
     totalScore += score;
     score = 0;
 }
@@ -107,19 +131,20 @@ const keep = (number) => {
 
 // transfer click event from image to checkbox
 const clickDie = (number) => {
-    if (document.getElementById("dice" + number).disabled) return;
+    if (document.getElementById("div" + number).disabled) return;
     if (kept[number]) {
-        document.getElementById("dice" + number).checked = false;
+        document.getElementById("die" + number).checked = false;
     } else {
-        document.getElementById("dice" + number).checked = true;
+        document.getElementById("die" + number).checked = true;
     }
+    let div = document.getElementById("div" + number);
+    div.classList.toggle("selected");
     keep(number);
 }
 
 // change the current player
 const changePlayer = () => {
     if (startGame) {
-        startGame = false;
         document.getElementById("next").innerHTML = "Next player";
     } else {
         let newScore = document.createElement("li");
@@ -146,8 +171,8 @@ const resetGame = () => {
     document.getElementById("scores").innerHTML = "";
     document.getElementById("totals").innerHTML = "";
     document.getElementById("dice").innerHTML = "";
-    document.getElementById("currentPlayer").innerText = "Current player: None";
-    document.getElementById("next").disabled = false;
+    document.getElementById("currentPlayer").innerText = "";
+    document.getElementById("next").disabled = true;
     document.getElementById("next").innerHTML = "Start";
 
     untick();
@@ -155,7 +180,7 @@ const resetGame = () => {
     document.getElementById("score").innerText = "Score: 0";
 }
 
-// reset the dice for the next player
+// reset the dice for the next player, also used for starting the game
 const nextPlayer = () => {
     let previousPlayer = currentPlayer;
     changePlayer();
@@ -175,10 +200,8 @@ const nextPlayer = () => {
     }
     if (currentPlayer === currentWinner || currentPlayer === stopAt) {
         alert("Congratulations " + players[currentWinner] + "! You have won with a score of " + winnerScore + "!");
-        document.getElementById("rollButton").disabled = true;
+        document.getElementById("roll").disabled = true;
         document.getElementById("next").disabled = true;
-        //currentWinner = null;
-        //winnerScore = 0;
     }
     untick();
     totalScore = score = 0;
@@ -227,6 +250,6 @@ const countScore = () => {
         if (value === 0 && count > 0) score += 100 * count;
         if (value === 4 && count > 0) score += 50 * count;
     }
-    document.getElementById("rollButton").disabled = (score === 0);
+    document.getElementById("roll").disabled = (score === 0);
     document.getElementById("score").innerText = "Score: " + (score + totalScore);
 }
