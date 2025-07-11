@@ -10,59 +10,67 @@
     <body>
         <header>
             <h1>Dutch dice game</h1>
+            <button id="rules" onclick="showRules()">Rules</button>
+            <button id="reset" onclick="resetGame()">Restart</button>
         </header>
         <br/>
-        <section>
-            <button id="roll" onclick="rollDice()" disabled>Roll Dice</button>
-            <button id="next" onclick="nextPlayer()" disabled>Start</button>
-            <button id="reset" onclick="resetGame()">Restart</button>
-            <button id="rules" onclick="showRules()">Rules</button>
-            <dialog id="rulesDialog">
-                <h2>Rules</h2>
-                <p>
-                    Players take turns rolling six dice. The goal is to score points by rolling certain combinations.
-                    After each roll, players can choose to keep some dice and re-roll the others.
-                </p>
-                <p>The game continues until a player reaches 5 000 points.</p>
-                <ul class="rulesList">
-                    <li>Single 1s: 100 points each</li>
-                    <li>Single 5s: 50 points each</li>
-                    <li>Three of a kind:
-                        <ul class="indentList">
-                            <li>Three 1s: 1 000 points</li>
-                            <li>Three 2s: 200 points</li>
-                            <li>Three 3s: 300 points</li>
-                            <li>Three 4s: 400 points</li>
-                            <li>Three 5s: 500 points</li>
-                            <li>Three 6s: 600 points</li>
-                        </ul>
-                    </li>
-                    <li>Four of a kind: Double the points for three of a kind</li>
-                    <li>Five of a kind: Triple the points for three of a kind</li>
-                    <li>Six of a kind: Quadruple the points for three of a kind</li>
-                    <li>Flush (1, 2, 3, 4, 5, 6): 1 500 points</li>
-                </ul>
+        <div class="container">
+            <div class="section game">
+                <dialog id="rulesDialog">
+                    <h2>Rules</h2>
+                    <p>
+                        Players take turns rolling six dice. The goal is to score points by rolling certain combinations.
+                        After each roll, players can choose to keep some dice and re-roll the others.
+                    </p>
+                    <p>The game continues until a player reaches 5 000 points.</p>
+                    <ul class="rulesList">
+                        <li>Single 1s: 100 points each</li>
+                        <li>Single 5s: 50 points each</li>
+                        <li>Three of a kind:
+                            <ul class="indentList">
+                                <li>Three 1s: 1 000 points</li>
+                                <li>Three 2s: 200 points</li>
+                                <li>Three 3s: 300 points</li>
+                                <li>Three 4s: 400 points</li>
+                                <li>Three 5s: 500 points</li>
+                                <li>Three 6s: 600 points</li>
+                            </ul>
+                        </li>
+                        <li>Four of a kind: Double the points for three of a kind</li>
+                        <li>Five of a kind: Triple the points for three of a kind</li>
+                        <li>Six of a kind: Quadruple the points for three of a kind</li>
+                        <li>Flush (1, 2, 3, 4, 5, 6): 1 500 points</li>
+                    </ul>
+                    <br/>
+                    <button autofocus id="closeDialog" onclick="closeDialog()">Close</button>
+                </dialog>
+                <div id="scoreSection">
+                    <p id="scoreTotal">Score: 0</p>
+                    <button id="next" onclick="nextPlayer()" disabled>Start</button>
+                </div>
+                <div class="dice">
+                    <div id="dice">
+                    </div>
+                </div>
+                <button id="roll" onclick="rollDice()" disabled>Roll Dice</button>
+            </div>
+            <div class="section">
+                <div class="playerSection">
+                    <label for="playerName">Add Player:</label>
+                    <br/>
+                    <input type="text" id="playerName" placeholder="Name">
+                    <input type="submit" id="addPlayer" value="Add player" onclick="addPlayer()">
+                </div>
                 <br/>
-                <button autofocus id="closeDialog" onclick="closeDialog()">Close</button>
-            </dialog>
-            <p id="currentPlayer"></p>
-            <div id="dice">
+                <table id="scoreTable">
+                <tr id="players" class="players">
+                </tr>
+                <tr id="scores" class="scores">
+                </tr>
+                <tr id="totals" class="totals">
+                </tr>
+                </table>
             </div>
-            <p id="score">Score: 0</p>
-            <div>
-                <label for="playerName">Add Player:</label>
-                <input type="text" id="playerName" placeholder="Name">
-                <input type="submit" id="addPlayer" value="Add player" onclick="addPlayer()">
-            </div>
-            <br/>
-            <table id="scoreTable">
-            <tr id="players" class="players">
-            </tr>
-            <tr id="scores" class="scores">
-            </tr>
-            <tr id="totals" class="totals">
-            </tr>
-            </table>
-        </section>
+        </div>
     </body>
 </html>

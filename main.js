@@ -1,5 +1,7 @@
 const dicePics = new Map();
 
+// TODO: fix keeping score when rolling again in one turn
+
 for (let i = 0; i < 6; i++) {
     dicePics.set(i, `<img src="images/${i + 1}.png" alt="Die showing ${i + 1}" `);
 }
@@ -74,7 +76,6 @@ const OR = (arr1, arr2) => {
 
 // rolls six dice
 const rollDice = () => {
-    console.log("Rolling dice");
     // if all dice are kept when the dice are rolled, keep the current score as baseline
     if (OR(kept, keptFromPrev).every(value => value)) {
         totalScore += score;
@@ -88,17 +89,16 @@ const rollDice = () => {
         if (keptFromPrev[i]) {
             // if the die was kept from the previous roll, keep it
             let div = document.getElementById("div" + i);
-            console.log(div.innerHTML);
-            console.log("keeping die " + i);
             dice.removeChild(div);
-            console.log("remove successful");
             div.disabled = true;
+            if (!div.classList.contains("disabledDie")) {
+                div.classList.add("disabledDie");
+            }
             dice.appendChild(div);
         } else {
             if (startGame) {
                 startGame = !(i === 5);
             } else {
-                console.log("removing die " + i);
                 let oldDiv = document.getElementById("div" + i);
                 dice.removeChild(oldDiv);
             }
@@ -146,6 +146,7 @@ const clickDie = (number) => {
 const changePlayer = () => {
     if (startGame) {
         document.getElementById("next").innerHTML = "Next player";
+        document.getElementById("player" + currentPlayer).classList.add("current");
     } else {
         let newScore = document.createElement("li");
         let result = kept.some(Boolean) ? totalScore + score : 0;
@@ -153,10 +154,11 @@ const changePlayer = () => {
         document.getElementById("scoreList" + currentPlayer).appendChild(newScore);
         let current = document.getElementById("total" + currentPlayer).innerText;
         document.getElementById("total" + currentPlayer).innerText = Number(current) + result;
+        document.getElementById("player" + currentPlayer).classList.remove("current");
         currentPlayer = (currentPlayer + 1) % players.length;
+        document.getElementById("player" + currentPlayer).classList.add("current");
     }
     const name = players[currentPlayer];
-    document.getElementById("currentPlayer").innerText = "Current player: " + name;
 }
 
 // reset the game
@@ -171,13 +173,12 @@ const resetGame = () => {
     document.getElementById("scores").innerHTML = "";
     document.getElementById("totals").innerHTML = "";
     document.getElementById("dice").innerHTML = "";
-    document.getElementById("currentPlayer").innerText = "";
     document.getElementById("next").disabled = true;
     document.getElementById("next").innerHTML = "Start";
 
     untick();
 
-    document.getElementById("score").innerText = "Score: 0";
+    document.getElementById("scoreTotal").innerText = "Score: 0";
 }
 
 // reset the dice for the next player, also used for starting the game
@@ -202,10 +203,13 @@ const nextPlayer = () => {
         alert("Congratulations " + players[currentWinner] + "! You have won with a score of " + winnerScore + "!");
         document.getElementById("roll").disabled = true;
         document.getElementById("next").disabled = true;
+        for (let i = 0; i < 6; i++) {
+            // TODO: disable all dice
+        }
     }
     untick();
     totalScore = score = 0;
-    document.getElementById("score").innerText = "Score: 0";
+    document.getElementById("scoreTotal").innerText = "Score: 0";
     rollDice();
 }
 
@@ -221,7 +225,7 @@ const countScore = () => {
     // if all dice are kept and contain values 1, 2, 3, 4, 5 and 6, the score is 1500
     if (isFlush()) {
         score = 1500;
-        document.getElementById("score").innerText = "Score: " + score;
+        document.getElementById("scoreTotal").innerText = "Score: " + score;
         return;
     }
     // count the number of same values kept
@@ -251,5 +255,5 @@ const countScore = () => {
         if (value === 4 && count > 0) score += 50 * count;
     }
     document.getElementById("roll").disabled = (score === 0);
-    document.getElementById("score").innerText = "Score: " + (score + totalScore);
+    document.getElementById("scoreTotal").innerText = "Score: " + (score + totalScore);
 }
