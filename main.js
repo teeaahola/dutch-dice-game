@@ -21,6 +21,41 @@ let currentWinner = null;
 let winnerScore = 0;
 let stopAt = null;
 
+const createDie = (number, i) => {
+    let div = document.createElement("div");
+    div.classList.add("dieContainer");
+    div.id = "div" + i;
+    div.alt = "Die showing " + (number + 1);
+    div.tabIndex = 0;
+    div.onclick = () => clickDie(i);
+    div.addEventListener("keydown", (event) => {
+        if (event.key === "Enter" || event.key === " ") {
+            clickDie(i);
+        }
+    });
+    let die = document.createElement("img");
+    die.src = "images/" + (number + 1) + ".png";
+    die.classList.add("die");
+    die.id = "die" + i;
+    diceValues[i] = number;
+    div.appendChild(die);
+    return div;
+}
+
+const createFlush = () => {
+    for (let i = 0; i < 6; i++) {
+        let div = createDie(i, i);
+        div.classList.add("disabledDie");
+        div.disabled = true;
+        div.tabIndex = -1;
+        document.getElementById("dice").appendChild(div);
+    }
+}
+
+window.onload = () => {
+    createFlush();
+}
+
 const showRules = () => {
     document.getElementById("rulesDialog").showModal();
 }
@@ -85,12 +120,12 @@ const rollDice = () => {
     kept = new Array(6).fill(false);
     let dice = document.getElementById("dice");
     for (let i = 0; i < 6; i++) {
-        let die;
         if (keptFromPrev[i]) {
             // if the die was kept from the previous roll, keep it
             let div = document.getElementById("div" + i);
             dice.removeChild(div);
             div.disabled = true;
+            div.tabIndex = -1;
             if (!div.classList.contains("disabledDie")) {
                 div.classList.add("disabledDie");
             }
@@ -98,23 +133,15 @@ const rollDice = () => {
         } else {
             if (startGame) {
                 startGame = !(i === 5);
+                let div = document.getElementById("div" + i);
+                dice.removeChild(div);
             } else {
                 let oldDiv = document.getElementById("div" + i);
                 dice.removeChild(oldDiv);
             }
             // create a new die
             let value = Math.floor(Math.random() * 6);
-            let div = document.createElement("div");
-            div.classList.add("dieContainer");
-            div.id = "div" + i;
-            div.alt = "Die showing " + (value + 1);
-            die = document.createElement("img");
-            die.src = "images/" + (value + 1) + ".png";
-            die.classList.add("die");
-            die.id = "die" + i;
-            div.onclick = () => clickDie(i);
-            diceValues[i] = value;
-            div.appendChild(die);
+            let div = createDie(value, i);
             dice.appendChild(div);
         }
     }
@@ -179,6 +206,8 @@ const resetGame = () => {
     untick();
 
     document.getElementById("scoreTotal").innerText = "Score: 0";
+
+    createFlush();
 }
 
 // reset the dice for the next player, also used for starting the game

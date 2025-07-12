@@ -5,6 +5,7 @@
         <title>Dutch dice game</title>
         <script src="main.js"></script>
         <link rel="stylesheet" href="app.css">
+        <link rel="icon" type="image/x-icon" href="/images/favicon.svg">
     </head>
 
     <body>
@@ -48,11 +49,11 @@
                     <p id="scoreTotal">Score: 0</p>
                     <button id="next" onclick="nextPlayer()" disabled>Start</button>
                 </div>
-                <div class="dice">
-                    <div id="dice">
-                    </div>
+                <div id="dice">
                 </div>
-                <button id="roll" onclick="rollDice()" disabled>Roll Dice</button>
+                <div class="roll">
+                    <button id="roll" onclick="rollDice()" disabled>Roll Dice</button>
+                </div>
             </div>
             <div class="section">
                 <div class="playerSection">
