@@ -233,8 +233,12 @@ const nextPlayer = () => {
         document.getElementById("roll").disabled = true;
         document.getElementById("next").disabled = true;
         for (let i = 0; i < 6; i++) {
-            // TODO: disable all dice
+            let div = document.getElementById("div" + i);
+            div.disabled = true;
+            div.tabIndex = -1;
+            div.classList.add("disabledDie");
         }
+        return;
     }
     untick();
     totalScore = score = 0;
@@ -276,10 +280,10 @@ const countScore = () => {
                 if (value === 4) score -= 100;
                 score += (value + 1) * 100 * (count - 2);
             }
-            // Remove the counted dice from further single scoring
+            // remove the counted dice from further single scoring
             count -= (count - 2);
         }
-        // Score single 1s and 5s left
+        // score single 1s and 5s left
         if (value === 0 && count > 0) score += 100 * count;
         if (value === 4 && count > 0) score += 50 * count;
     }
