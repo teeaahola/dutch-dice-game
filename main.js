@@ -70,12 +70,12 @@ const untick = () => {
 }
 
 const addPlayer = () => {
-    console.log("here");
     const playerName = document.getElementById("playerName").value.trim();
     if (playerName === "") {
         alert("Please enter a player name.");
         return;
     }
+    document.getElementById("scoreTable").classList.remove("hidden");
     let playerNumber = players.length
     // add player name to table
     let playerList = document.getElementById("players");
@@ -206,6 +206,7 @@ const resetGame = () => {
     untick();
 
     document.getElementById("scoreTotal").innerText = "Score: 0";
+    document.getElementById("scoreTable").classList.add("hidden");
 
     createFlush();
 }
