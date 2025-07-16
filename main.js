@@ -1,10 +1,5 @@
-const dicePics = new Map();
-
 // TODO: fix keeping score when rolling again in one turn
 
-for (let i = 0; i < 6; i++) {
-    dicePics.set(i, `<img src="images/${i + 1}.png" alt="Die showing ${i + 1}" `);
-}
 
 let kept = new Array(6).fill(false);
 let keptFromPrev = new Array(6).fill(false);
