@@ -195,7 +195,7 @@ button:hover, input[type="submit"]:hover {
 	cursor: pointer;
 }
 
-button:disabled {
+button:disabled, #addPlayer:disabled {
 	background-color: #b4d9e5;
 	cursor: auto;
 }
@@ -274,22 +274,6 @@ input[type="text"]:focus {
 	border-color: #53a9c4;
 	outline: none;
 }
-
-
-
-/*input[type="submit"] {
-	background-color: #5bc0de;
-	color: white;
-	border: none;
-	border-radius: 5px;
-	font-size: 1.2em;
-	padding: 5px 20px;
-	cursor: pointer;
-}
-
-input[type="submit"]:hover {
-	background-color: #31b0d5;
-}*/
 
 .hidden {
 	display: none;
