@@ -8,6 +8,7 @@ let diceText = new Array(6).fill("");
 let diceValues = new Array(6).fill(0);
 let totalScore = 0;
 let score = 0;
+let rolloverScore = 0;
 
 const players = [];
 let currentPlayer = 0;
@@ -108,7 +109,7 @@ const OR = (arr1, arr2) => {
 const rollDice = () => {
     // if all dice are kept when the dice are rolled, keep the current score as baseline
     if (OR(kept, keptFromPrev).every(value => value)) {
-        totalScore += score;
+        rolloverScore = totalScore + score;
         untick();
     }
     keptFromPrev = OR(kept, keptFromPrev);
@@ -171,8 +172,8 @@ const changePlayer = () => {
         document.getElementById("player" + currentPlayer).classList.add("current");
     } else {
         let newScore = document.createElement("li");
-        let result = kept.some(Boolean) ? totalScore + score : 0;
-        newScore.textContent = result > 0 ? totalScore + score : "—";
+        let result = kept.some(Boolean) ? totalScore + score : rolloverScore;
+        newScore.textContent = result > 0 ? result : "—";
         document.getElementById("scoreList" + currentPlayer).appendChild(newScore);
         let current = document.getElementById("total" + currentPlayer).innerText;
         document.getElementById("total" + currentPlayer).innerText = Number(current) + result;
@@ -185,7 +186,7 @@ const changePlayer = () => {
 
 // reset the game
 const resetGame = () => {
-    players.length = currentPlayer = winnerScore = totalScore = score = 0;
+    players.length = currentPlayer = winnerScore = totalScore = score = rolloverScore = 0;
     currentWinner = stopAt = null;
     startGame = true;
     kept.fill(false);
@@ -197,6 +198,7 @@ const resetGame = () => {
     document.getElementById("dice").innerHTML = "";
     document.getElementById("next").disabled = true;
     document.getElementById("next").innerHTML = "Start";
+    document.getElementById("addPlayer").disabled = false;
 
     untick();
 
@@ -228,6 +230,7 @@ const nextPlayer = () => {
         alert("Congratulations " + players[currentWinner] + "! You have won with a score of " + winnerScore + "!");
         document.getElementById("roll").disabled = true;
         document.getElementById("next").disabled = true;
+        document.getElementById("addPlayer").disabled = true;
         for (let i = 0; i < 6; i++) {
             let div = document.getElementById("div" + i);
             div.disabled = true;
@@ -237,7 +240,7 @@ const nextPlayer = () => {
         return;
     }
     untick();
-    totalScore = score = 0;
+    totalScore = score = rolloverScore = 0;
     document.getElementById("scoreTotal").innerText = "Score: 0";
     rollDice();
 }
