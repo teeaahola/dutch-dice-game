@@ -1,6 +1,3 @@
-// TODO: fix keeping score when rolling again in one turn
-
-
 let kept = new Array(6).fill(false);
 let keptFromPrev = new Array(6).fill(false);
 
@@ -17,6 +14,13 @@ let currentWinner = null;
 let winnerScore = 0;
 let stopAt = null;
 
+/**
+ * Initializes a die element with a random number and sets up event listeners.
+ * The die is clickable and can be selected or deselected.
+ * @param {*} number - The random number for the die (0-5).
+ * @param {*} i - The index of the die in the dice array.
+ * @returns {div} - DOM element representing the die.
+ */
 const createDie = (number, i) => {
     let div = document.createElement("div");
     div.classList.add("dieContainer");
@@ -38,6 +42,10 @@ const createDie = (number, i) => {
     return div;
 }
 
+/**
+ * Creates a flush of six dice with values 1-6.
+ * All dice are initially disabled.
+ */
 const createFlush = () => {
     for (let i = 0; i < 6; i++) {
         let div = createDie(i, i);
@@ -48,23 +56,51 @@ const createFlush = () => {
     }
 }
 
+/**
+ * Initializes the game by creating a flush of dice and setting up an event listener for the form.
+ */
 window.onload = () => {
     createFlush();
+
+    var input = document.getElementById("playerName");
+    input.addEventListener("keypress", function (event) {
+        if (event.key === "Enter") {
+            event.preventDefault();
+            document.getElementById("addPlayer").click();
+        }
+    });
 }
 
+/**
+ * Displays the rules of the game in a dialog.
+ * The dialog is shown when the "Show Rules" button is clicked.
+ */
 const showRules = () => {
     document.getElementById("rulesDialog").showModal();
 }
 
+/**
+ * Closes the rules dialog.
+ */
 const closeDialog = () => {
     document.getElementById("rulesDialog").close();
 }
 
+/**
+ * Unticks all dice and resets the kept arrays.
+ * This is used to reset the game state when starting a new round or game.
+ */
 const untick = () => {
     kept.fill(false);
     keptFromPrev.fill(false);
 }
 
+/**
+ * Adds a new player to the game.
+ * The player's name is taken from the input field.
+ * Do not allow empty names.
+ * The player is added to the score table and the input field is reset.
+ */
 const addPlayer = () => {
     const playerName = document.getElementById("playerName").value.trim();
     if (playerName === "") {
@@ -98,14 +134,24 @@ const addPlayer = () => {
     // reset the input field
     document.getElementById("playerName").value = "";
     document.getElementById("next").disabled = false;
-    return false;
 }
 
+/**
+ * Performs a logical OR operation on two arrays element-wise.
+ * @param {*} arr1 - The first array to compare.
+ * @param {*} arr2 - The second array to compare.
+ * @returns {Array} - A new array where each element is the logical OR of the corresponding elements in arr1 and arr2.
+ */
 const OR = (arr1, arr2) => {
     return arr1.map((value, index) => value || arr2[index]);
 }
 
-// rolls six dice
+/**
+ * Rolls the dice and updates the game state.
+ * If all dice are kept from the previous roll, it keeps the current score as a baseline.
+ * Generates new random values for the dice and updates the display.
+ * The score is updated based on the kept dice.
+ */
 const rollDice = () => {
     // if all dice are kept when the dice are rolled, keep the current score as baseline
     if (OR(kept, keptFromPrev).every(value => value)) {
@@ -146,13 +192,24 @@ const rollDice = () => {
     score = 0;
 }
 
-// keep the value of the parameter die
+/**
+ * Toggles the kept state of the die and updates the score.
+ * If the die is kept, it is marked as selected; if unkept, it is unselected.
+ * The score is recalculated based on the current kept dice.
+ * @param {*} number - The index of the die to keep or unkeep.
+ */
 const keep = (number) => {
     kept[number] = !kept[number];
     countScore();
 }
 
-// transfer click event from image to checkbox
+/**
+ * Handles the click event on a die.
+ * If the die is disabled, it does nothing.
+ * If the die is already kept, it unkeeps it; otherwise, it keeps it.
+ * The die's visual state is updated to reflect its kept status.
+ * @param {*} number - The index of the die to click.
+ */
 const clickDie = (number) => {
     if (document.getElementById("div" + number).disabled) return;
     if (kept[number]) {
@@ -165,7 +222,11 @@ const clickDie = (number) => {
     keep(number);
 }
 
-// change the current player
+/**
+ * Changes the current player to the next one.
+ * If the game has started, it updates the UI to show the next player and counts the
+ * player's score of the round and the game.
+ */
 const changePlayer = () => {
     if (startGame) {
         document.getElementById("next").innerHTML = "Next player";
@@ -184,7 +245,11 @@ const changePlayer = () => {
     const name = players[currentPlayer];
 }
 
-// reset the game
+/**
+ * Resets the game state to its initial values.
+ * Clears the players, scores, and dice.
+ * Resets the UI elements and prepares for a new game.
+ */
 const resetGame = () => {
     players.length = currentPlayer = winnerScore = totalScore = score = rolloverScore = 0;
     currentWinner = stopAt = null;
@@ -208,7 +273,14 @@ const resetGame = () => {
     createFlush();
 }
 
-// reset the dice for the next player, also used for starting the game
+/**
+ * Moves to the next player and checks for a winner.
+ * If the current player has a score of 5000 or more, they are declared the
+ * winner.
+ * If a winner is found, the game is ended and the UI is updated to reflect the
+ * winner's score.
+ * If no winner is found, the game continues with the next player.
+ */
 const nextPlayer = () => {
     let previousPlayer = currentPlayer;
     changePlayer();
@@ -227,7 +299,7 @@ const nextPlayer = () => {
         }
     }
     if (currentPlayer === currentWinner || currentPlayer === stopAt) {
-        alert("Congratulations " + players[currentWinner] + "! You have won with a score of " + winnerScore + "!");
+        alert("Congratulations, " + players[currentWinner] + "! You have won with a score of " + winnerScore + "!");
         document.getElementById("roll").disabled = true;
         document.getElementById("next").disabled = true;
         document.getElementById("addPlayer").disabled = true;
@@ -245,13 +317,19 @@ const nextPlayer = () => {
     rollDice();
 }
 
+/**
+ * Checks if all kept dice form a flush (1, 2, 3, 4, 5, 6).
+ * @returns {boolean} - Returns true if all kept dice form a flush.
+ */
 const isFlush = () => {
     // sort a copy of the dice values
     let sortedValues = [...diceValues].sort((a, b) => a - b);
     return OR(kept, keptFromPrev).every((value, index) => value && sortedValues[index] === index);
 }
 
-// count current score and display it on the screen
+/**
+ * Calculates the score based on the kept dice.
+ */
 const countScore = () => {
     score = 0;
     // if all dice are kept and contain values 1, 2, 3, 4, 5 and 6, the score is 1500
